@@ -1,36 +1,36 @@
 import os
-from google import genai
+import google.generativeai as genai
 
 def generate_summary(data_text: str) -> str:
-    """
-    Sends the parsed sales data to Google Gemini to get an executive summary.
-    """
-    
+
     api_key = os.getenv("GEMINI_API_KEY")
+
     if not api_key:
         raise ValueError("GEMINI_API_KEY environment variable not set")
-        
-    client = genai.Client(api_key=api_key)
-    
+
+    genai.configure(api_key=api_key)
+
+    model = genai.GenerativeModel("gemini-1.5-flash")
+
     prompt = f"""
-    You are an expert sales analyst. Please analyze the following sales data and generate a professional executive sales summary.
-    
-    The summary MUST include:
-    - Total revenue
-    - Top performing product category
-    - Regional sales trends
-    - Any anomalies (like cancelled orders)
-    - A short executive-level narrative paragraph
-    
-    Here is the data:
-    {data_text}
-    """
-    
+You are an expert sales analyst.
+
+Analyze the following sales dataset and generate an executive summary.
+
+Include:
+- Total revenue
+- Top performing product category
+- Regional trends
+- Any anomalies (cancelled orders etc)
+- A short executive summary paragraph
+
+Dataset:
+{data_text}
+"""
+
     try:
-        response = client.models.generate_content(
-            model='gemini-2.5-flash',
-            contents=prompt,
-        )
+        response = model.generate_content(prompt)
         return response.text
+
     except Exception as e:
-        raise RuntimeError(f"Failed to generate summary from AI: {str(e)}")
+        raise RuntimeError(f"Failed to generate summary: {str(e)}")
