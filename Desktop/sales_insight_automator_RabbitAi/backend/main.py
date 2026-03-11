@@ -8,7 +8,7 @@ import os
 from dotenv import load_dotenv
 
 from utils.file_parser import parse_sales_file
-from ai_service import generate_sales_summary
+from ai_service import generate_summary
 from email_service import send_summary_email
 
 # Load environment variables
@@ -71,7 +71,7 @@ async def analyze_sales(
         data_text = parse_sales_file(contents, filename)
         
         # 4. Generate AI summary with Gemini
-        summary = generate_sales_summary(data_text)
+        summary = generate_summary(data_text)
         
         # 5. Send email via SMTP
         send_summary_email(email, summary)
